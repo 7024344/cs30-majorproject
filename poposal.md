@@ -5,8 +5,8 @@
 
 ## Needs To Have
 - maps
-- 
-- 
+- body
+- system for shoot
 - 
 - sound effects
 - 
