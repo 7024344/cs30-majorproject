@@ -1,10 +1,10 @@
 # Major Project Proposal
 
 ## Description
-- 
+- Flat Zombies: Defense&Cleanup
 
 ## Needs To Have
-- 
+- maps
 - 
 - 
 - 
@@ -14,8 +14,12 @@
 
 ## Nice To Have
 - 
-- enemy AI
 - 
 - 
 - 
+- camera bobbing
 - multiple unique weapons and enemies
+- Difficulty selection
+- - Easy
+- - Normal
+- - Hardcore
