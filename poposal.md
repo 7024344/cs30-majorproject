@@ -20,6 +20,6 @@
 - camera bobbing
 - multiple unique weapons and enemies
 - Difficulty selection
-- - Easy
-- - Normal
-- - Hardcore
+    - Easy
+    - Normal
+    - Hardcore
