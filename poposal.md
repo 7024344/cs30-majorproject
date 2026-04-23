@@ -10,7 +10,7 @@
 - 
 - sound effects
 - 
-- basic enemy movement
+- basic movement and enemy movement
 
 ## Nice To Have
 - 
