@@ -12,10 +12,11 @@
 - health system
 - sound effects
 - collision detection (bullet)
-- player movement and enemy movement
+- enemy movement
 - simple UI (health / score)
 
 ## Nice To Have
+- player movement
 - reload system
 - gun recoil system
 - game over screen
