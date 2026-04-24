@@ -6,7 +6,7 @@
 
 
 ## Needs To Have
-- maps
+- background (maps)
 - player body
 - shooting system
 - health system
