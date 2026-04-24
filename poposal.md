@@ -11,7 +11,7 @@ The objective of the game is to survive as long as possible by avoiding and defe
 - shooting system
 - health system
 - sound effects
-- collision detection
+- collision detection (bullet)
 - basic movement and enemy movement
 - simple UI (health / score)
 
