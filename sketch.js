@@ -18,6 +18,8 @@ function setup() {
 
 function draw() {
   background(220);
+  movePlayer();
+  player();
 }
 
 function movePlayer() {

@@ -6,7 +6,6 @@
 
 
 ## Needs To Have
-- background (maps)
 - player body
 - shooting system
 - health system
@@ -23,6 +22,7 @@
 - main UI
 - camera bobbing
 - multiple unique weapons and enemies
+- background (maps)
 - Difficulty selection
     - Easy
     - Normal
