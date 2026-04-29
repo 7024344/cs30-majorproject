@@ -5,6 +5,7 @@
 // Extra for Experts:
 // 
 
+let bullets = [];
 let x;
 let y;
 let speed;
@@ -35,8 +36,12 @@ function player() {
   rect(x, y, 50, 100);
 }
 
-function bullet() {
-  noStroke();
-  fill("red");
-  rect(x + 100, y + 30, 15, 3);
+class Bullet {
+  constructor(x, y, dx, dy) {
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    
+  }
 }
