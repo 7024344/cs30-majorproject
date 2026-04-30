@@ -5,35 +5,37 @@
 // Extra for Experts:
 // 
 
-let bullets = [];
-let x;
-let y;
-let speed;
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  x = 100;
-  y = height/2;
-  speed = 5;
 }
 
 function draw() {
   background(220);
-  movePlayer();
-  player();
 }
 
-function movePlayer() {
-  if (keyIsDown(65)) { // a
-    x -= speed;
+class player {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.speed = 5;
+    this.w = 50;
+    this.h = 100;
   }
-  if (keyIsDown(68)) { //d
-    x += speed;
-  }
-}
 
-function player() {
-  rect(x, y, 50, 100);
+  update() {  
+    if (keyIsDown(65)) { // a
+      x -= speed;
+    }
+    if (keyIsDown(68)) { // d
+      x += speed;
+    }
+  }
+
+  display () {
+    rect(this.x, this.y, this.w, this.h); 
+  }
 }
 
 class Bullet {
@@ -42,6 +44,14 @@ class Bullet {
     this.y = y;
     this.dx = dx;
     this.dy = dy;
-    
+  }
+
+  update() {
+    this.x += this.dx;
+    this.y += this.dy;
+  }
+
+  display() {
+
   }
 }
