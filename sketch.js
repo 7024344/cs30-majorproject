@@ -5,17 +5,20 @@
 // Extra for Experts:
 // 
 
-
+let newBullet = [];
+let newPlayer;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  newPlayer = new Player(0, 0, 0);
 }
 
 function draw() {
   background(220);
+  newPlayer.display();
 }
 
-class player {
+class Player {
   constructor(x, y) {
     this.x = x;
     this.y = y;
@@ -24,13 +27,9 @@ class player {
     this.h = 100;
   }
 
-  update() {  
-    if (keyIsDown(65)) { // a
-      x -= speed;
-    }
-    if (keyIsDown(68)) { // d
-      x += speed;
-    }
+  update() {
+    this.y += this.speed;
+    this.y -= this.speed;
   }
 
   display () {
