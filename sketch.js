@@ -5,7 +5,9 @@
 // Extra for Experts:
 // 
 
-let newBullet = [];
+let Bullets = [];
+let lastShotTime = 0;
+let fireRate = 60; 
 let newPlayer;
 
 function setup() {
@@ -16,6 +18,8 @@ function setup() {
 function draw() {
   background(220);
   newPlayer.display();
+  newPlayer.update();
+
 }
 
 class Player {
@@ -28,8 +32,18 @@ class Player {
   }
 
   update() {
-    this.y += this.speed;
-    this.y -= this.speed;
+    if (keyIsDown("68")) { // d
+      this.x += this.speed;
+    }
+    if (keyIsDown("65")) { // a
+      this.x -= this.speed;
+    }
+    if (keyIsDown("83")) { // s
+      this.y += this.speed;
+    }
+    if (keyIsDown("87")) { // w
+      this.y -= this.speed;
+    }
   }
 
   display () {
@@ -41,16 +55,20 @@ class Bullet {
   constructor(x, y, dx, dy) {
     this.x = x;
     this.y = y;
-    this.dx = dx;
-    this.dy = dy;
+    
+    this.size = 8;
   }
-
+  
   update() {
-    this.x += this.dx;
-    this.y += this.dy;
+
   }
-
+  
   display() {
-
+    fill(255, 0, 0);
+    ellipse(this.x, this.y, this.size);
+  }
+  
+  isOffScreen() {
+    return this.x < 0 || this.x > width || this.y < 0 || this.y > height;
   }
 }
