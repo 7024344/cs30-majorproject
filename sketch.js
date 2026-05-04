@@ -7,12 +7,12 @@
 
 let Bullets = [];
 let lastShotTime = 0;
-let fireRate = 60; 
+let fireRate = 60;
 let newPlayer;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  newPlayer = new Player(0, 0, 0);
+  newPlayer = new Player(width/8, height/2);
 }
 
 function draw() {
@@ -47,6 +47,7 @@ class Player {
   }
 
   display () {
+    fill(255, 255, 255);
     rect(this.x, this.y, this.w, this.h); 
   }
 }
@@ -55,8 +56,9 @@ class Bullet {
   constructor(x, y, dx, dy) {
     this.x = x;
     this.y = y;
-    
     this.size = 8;
+    this.dx = dx;
+    this.dy = dy;
   }
   
   update() {
