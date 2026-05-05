@@ -19,7 +19,16 @@ function draw() {
   background(220);
   newPlayer.display();
   newPlayer.update();
+  
+  for (let i = Bullets.length - 1; i >= 0; i--) {
+    Bullets[i].move();
+    Bullets[i].display();
+  }
 
+  if (mouseIsPressed === true) {
+    let b = new Bullet(mouseX, mouseY);
+    Bullets,push(b);
+  }
 }
 
 class Player {
@@ -57,12 +66,13 @@ class Bullet {
     this.x = x;
     this.y = y;
     this.size = 8;
-    this.dx = dx;
-    this.dy = dy;
+    this.speed = 5;
+    this.dx = dx - x;
+    this.dy = dy - y;
   }
   
   update() {
-
+    this.y -= this.speed;
   }
   
   display() {
@@ -71,6 +81,8 @@ class Bullet {
   }
   
   isOffScreen() {
-    return this.x < 0 || this.x > width || this.y < 0 || this.y > height;
+    if (Bullets[i].y < 0) {
+      Bullets.splice(i, 1);
+    }
   }
 }
