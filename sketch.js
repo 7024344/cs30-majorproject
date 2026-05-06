@@ -6,8 +6,7 @@
 // 
 
 let Bullets = [];
-let lastShotTime = 0;
-let fireRate = 60;
+let fireRate;
 let newPlayer;
 
 function setup() {
@@ -19,18 +18,19 @@ function draw() {
   background(220);
   newPlayer.display();
   newPlayer.update();
+
+  // if (mouseIsPressed && shootDelay <= 0) {
+  //   Bullets.push(new Bullet(newPlayer.x, newPlayer.y, mouseX, mouseY));
+  //   fireRate = 10;
+  // }
+
+  fireRate--;
   
   for (let i = Bullets.length - 1; i >= 0; i--) {
-    Bullets[i].move();
+    Bullets[i].update();
     Bullets[i].display();
   }
-
-  if (mouseIsPressed === true) {
-    let b = new Bullet(mouseX, mouseY);
-    Bullets,push(b);
-  }
 }
-
 class Player {
   constructor(x, y) {
     this.x = x;
@@ -62,27 +62,26 @@ class Player {
 }
 
 class Bullet {
-  constructor(x, y, dx, dy) {
-    this.x = x;
-    this.y = y;
-    this.size = 8;
-    this.speed = 5;
-    this.dx = dx - x;
-    this.dy = dy - y;
+  constructor(x, y, targetX, targetY) {
+    this.x = x + 15;
+    this.y = y + 15;
+
+    // let angle = atan2(targetY - y, targetX - x);
+    // this.dx = cos(angle) * 5;
+    // this.dy = sin(angle) * 5;
   }
-  
+
   update() {
-    this.y -= this.speed;
+    this.x += this.dx;
+    this.y += this.dy;
   }
-  
+
   display() {
-    fill(255, 0, 0);
-    ellipse(this.x, this.y, this.size);
+    fill("black");
+    ellipse(this.x, this.y, 10);
   }
-  
-  isOffScreen() {
-    if (Bullets[i].y < 0) {
-      Bullets.splice(i, 1);
-    }
+
+  offscreen() {
+    return this.x < 0 || this.x > width || this.y < 0 || this.y > height;
   }
 }
