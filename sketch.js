@@ -41,6 +41,7 @@ class Player {
   }
 
   update() {
+    // move
     if (keyIsDown("68")) { // d
       this.x += this.speed;
     }
