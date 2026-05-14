@@ -7,36 +7,70 @@
 
 let Bullets = [];
 let enemies = [];
+let ammo = 30;
+let maxAmmo = 30;
 let fireRate = 0;
+let reloadTimes = 0;
+let reloading = false;
 let newPlayer;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   newPlayer = new Player(width / 8, height / 2);
-  enemies = new Enemie(width / 1.2, height / 2);
 }
 
 function draw() {
   background(220);
+
+  fill(0);
+  textSize(24);
+  textAlign(LEFT);
+  if (reloading) {
+    fill(255, 0, 0);
+    text("RELOADING...", 20, 70);
+  } 
+  else {
+    fill(0);
+    text("Ammo: " + ammo + "/" + maxAmmo, 20, 70);
+  }
+
   newPlayer.display();
   newPlayer.update();
-  enemies.display();
   
-  if (mouseIsPressed && fireRate <= 0) {
+  if (mouseIsPressed && fireRate <= 0 && ammo > 0 && !reloading) {
     Bullets.push(new Bullet(newPlayer.x, newPlayer.y, mouseX, mouseY));
+    ammo--;
     fireRate = 3;
   }
   if (fireRate > 0) {
     fireRate--;
   }
+  if (ammo <= 0 && !reloading) {
+    reloading = true;
+    reloadTimes = 60;
+  }
+  if (reloading) {
+    reloadTimes--;
+    if (reloading) {
+      ammo = maxAmmo;
+      reloading = false;
+    }
+  }
 
   for (let i = Bullets.length - 1; i >= 0; i--) {
     Bullets[i].update();
     Bullets[i].display();
-
-    // fix
+    
     if (Bullets[i] && Bullets[i].offscreen()) {
       Bullets.splice(i, 1);
+    }
+  }
+}
+
+function keyPressed() {
+  if (key === "r") {
+    if (ammo < maxAmmo && !reloading) {
+      ammo = 0;
     }
   }
 }
