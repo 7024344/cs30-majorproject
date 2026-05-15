@@ -6,8 +6,8 @@
 
 
 ## Needs To Have
-- player body
-- shooting system
+- player body✅
+- shooting system✅
 - health system
 - sound effects
 - collision detection (bullet)

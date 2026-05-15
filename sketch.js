@@ -11,7 +11,7 @@ let ammo = 30;
 let maxAmmo = 30;
 let fireRate = 0;
 let reloadTimes = 0;
-let reloading = false;
+let isReloading;
 let newPlayer;
 
 function setup() {
@@ -25,7 +25,7 @@ function draw() {
   fill(0);
   textSize(24);
   textAlign(LEFT);
-  if (reloading) {
+  if (isReloading) {
     fill(255, 0, 0);
     text("RELOADING...", 20, 70);
   } 
@@ -37,7 +37,7 @@ function draw() {
   newPlayer.display();
   newPlayer.update();
   
-  if (mouseIsPressed && fireRate <= 0 && ammo > 0 && !reloading) {
+  if (mouseIsPressed && fireRate <= 0 && ammo > 0 && !isReloading) {
     Bullets.push(new Bullet(newPlayer.x, newPlayer.y, mouseX, mouseY));
     ammo--;
     fireRate = 3;
@@ -45,17 +45,17 @@ function draw() {
   if (fireRate > 0) {
     fireRate--;
   }
-  if (ammo <= 0 && !reloading) {
-    reloading = true;
-    reloadTimes = 60;
-  }
-  if (reloading) {
-    reloadTimes--;
-    if (reloading) {
-      ammo = maxAmmo;
-      reloading = false;
-    }
-  }
+  // if (ammo <= 0 && !isReloading) {
+  //   isReloading;
+  //   reloadTimes = 60;
+  // }
+  // if (isReloading) {
+  //   reloadTimes--;
+  //   if (isReloading) {
+  //     ammo = maxAmmo;
+  //     isReloading = false;
+  //   }
+  // }
 
   for (let i = Bullets.length - 1; i >= 0; i--) {
     Bullets[i].update();
@@ -69,8 +69,8 @@ function draw() {
 
 function keyPressed() {
   if (key === "r") {
-    if (ammo < maxAmmo && !reloading) {
-      ammo = 0;
+    if (ammo < maxAmmo && !isReloading) {
+      ammo = maxAmmo;
     }
   }
 }
