@@ -47,14 +47,15 @@ function draw() {
     Bullets.push(new Bullet(newPlayer.x, newPlayer.y, mouseX, mouseY));
     ammo--;
     fireRate = 3;
-
   }
+
   if (fireRate > 0) {
     fireRate--;
   }
+
   if (ammo <= 0 && !isReloading) {
     isReloading = true;
-    reloadTimes = 60;
+    reloadTimes = 90;
   }
 
   if (isReloading) {
@@ -172,7 +173,7 @@ class Enemy {
     this.y = y;
     this.w = 50;
     this.h = 100;
-    this.speed = 1.5 + (frameCount / 3000);
+    this.speed = 1.5 + frameCount / 3000;
     
     if (this.speed > 5) {
       this.speed = 5;
