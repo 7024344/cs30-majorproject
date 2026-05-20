@@ -11,12 +11,18 @@ let ammo = 30;
 let maxAmmo = 30;
 let fireRate = 0;
 let reloadTimes = 0;
-let isReloading;
+let spawnRate = 90;
+let minSpawnRate = 20;
+let isReloading = false;
 let newPlayer;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   newPlayer = new Player(width / 8, height / 2);
+
+  for (let i = 0; i < 3; i++) {
+    enemies.push(new Enemy(random(width / 2, width - 100), random(100, height - 100)));
+  }
 }
 
 function draw() {
@@ -41,36 +47,63 @@ function draw() {
     Bullets.push(new Bullet(newPlayer.x, newPlayer.y, mouseX, mouseY));
     ammo--;
     fireRate = 3;
+
   }
   if (fireRate > 0) {
     fireRate--;
   }
-  // if (ammo <= 0 && !isReloading) {
-  //   isReloading;
-  //   reloadTimes = 60;
-  // }
-  // if (isReloading) {
-  //   reloadTimes--;
-  //   if (isReloading) {
-  //     ammo = maxAmmo;
-  //     isReloading = false;
-  //   }
-  // }
+  if (ammo <= 0 && !isReloading) {
+    isReloading = true;
+    reloadTimes = 60;
+  }
+
+  if (isReloading) {
+    reloadTimes--;
+    if (reloadTimes <= 0) {
+      ammo = maxAmmo;
+      isReloading = false;
+    }
+  }
 
   for (let i = Bullets.length - 1; i >= 0; i--) {
     Bullets[i].update();
     Bullets[i].display();
     
+    for (let j = enemies.length - 1; j >= 0; j--) {
+      if (Bullets[i] && enemies[j].hits(Bullets[i])) {
+        enemies.splice(j, 1);
+        Bullets.splice(i, 1);
+        break;
+      }
+    }
+
     if (Bullets[i] && Bullets[i].offscreen()) {
       Bullets.splice(i, 1);
     }
   }
+
+  if (frameCount % floor(spawnRate) === 0) {
+    let spawnX = width + 50; 
+    let spawnY = random(0, height - 100);
+    
+    enemies.push(new Enemy(spawnX, spawnY));
+  }
+  if (frameCount % 300 === 0) {
+    if (spawnRate > minSpawnRate) {
+      spawnRate -= 10;
+    }
+  }
+  for (let enemy of enemies) {
+    enemy.update(newPlayer.x, newPlayer.y);
+    enemy.display();
+  }
 }
 
 function keyPressed() {
-  if (key === "r") {
+  if (key === "r" || key === "R") {
     if (ammo < maxAmmo && !isReloading) {
-      ammo = maxAmmo;
+      isReloading = true;
+      reloadTimes = 60;
     }
   }
 }
@@ -97,6 +130,9 @@ class Player {
     if (keyIsDown(87)) {
       this.y -= this.speed; // W
     }
+
+    this.x = constrain(this.x, 0, width - this.w);
+    this.y = constrain(this.y, 0, height - this.h);
   }
 
   display() {
@@ -127,24 +163,34 @@ class Bullet {
 
   offscreen() {
     return this.x < 0 || this.x > width || this.y < 0 || this.y > height;
-  } 
+  }
 }
 
-// ...
 class Enemy {
   constructor(x, y) {
     this.x = x;
     this.y = y;
     this.w = 50;
     this.h = 100;
+    this.speed = 1.5 + (frameCount / 3000);
+    
+    if (this.speed > 5) {
+      this.speed = 5;
+    }
   }
 
-  update() {
-
+  update(playerX, playerY) {
+    let angle = atan2(playerY - this.y, playerX - this.x);
+    this.x += cos(angle) * this.speed;
+    this.y += sin(angle) * this.speed;
   }
 
   display() {
     fill(255, 0, 0);
     rect(this.x, this.y, this.w, this.h); 
+  }
+
+  hits(bullet) {
+    return bullet.x > this.x && bullet.x < this.x + this.w && bullet.y > this.y && bullet.y < this.y + this.h;
   }
 }
