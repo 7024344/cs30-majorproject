@@ -7,6 +7,7 @@
 
 let Bullets = [];
 let enemies = [];
+let score = 0;
 let ammo = 30;
 let maxAmmo = 30;
 let fireRate = 0;
@@ -31,13 +32,14 @@ function draw() {
   fill(0);
   textSize(24);
   textAlign(LEFT);
+  text("Score: " + score, 20 ,50);
   if (isReloading) {
     fill(255, 0, 0);
-    text("RELOADING...", 20, 70);
+    text("RELOADING...", 20, 80);
   } 
   else {
     fill(0);
-    text("Ammo: " + ammo + "/" + maxAmmo, 20, 70);
+    text("Ammo: " + ammo + "/" + maxAmmo, 20, 80);
   }
 
   newPlayer.display();
@@ -74,6 +76,7 @@ function draw() {
       if (Bullets[i] && enemies[j].hits(Bullets[i])) {
         enemies.splice(j, 1);
         Bullets.splice(i, 1);
+        score++;
         break;
       }
     }
@@ -98,6 +101,14 @@ function draw() {
     enemy.update(newPlayer.x, newPlayer.y);
     enemy.display();
   }
+  for (let i = enemies.length - 1; i >= 0; i--) {
+    enemies[i].update(newPlayer.x, newPlayer.y);
+    enemies[i].display();
+
+    if (enemies[i].hitsPlayer(newPlayer)) {
+      gameOver();
+    }
+  }
 }
 
 function keyPressed() {
@@ -107,6 +118,17 @@ function keyPressed() {
       reloadTimes = 60;
     }
   }
+}
+
+function gameOver() {
+  noLoop();
+  background(0, 150);
+  fill(255);
+  textAlign(CENTER);
+  textSize(60);
+  text("GAME OVER", width / 2, height / 2);
+  textSize(30);
+  text("Final Score: " + score, width / 2, height / 2 + 50);
 }
 
 class Player {
@@ -132,7 +154,7 @@ class Player {
       this.y -= this.speed; // W
     }
 
-    this.x = constrain(this.x, 0, width - this.w);
+    this.x = constrain(this.x, 0, width/2 - this.w);
     this.y = constrain(this.y, 0, height - this.h);
   }
 
@@ -173,7 +195,7 @@ class Enemy {
     this.y = y;
     this.w = 50;
     this.h = 100;
-    this.speed = 1.5 + frameCount / 3000;
+    this.speed = 1.5 + frameCount / 2000;
     
     if (this.speed > 5) {
       this.speed = 5;
@@ -192,6 +214,11 @@ class Enemy {
   }
 
   hits(bullet) {
-    return bullet.x > this.x && bullet.x < this.x + this.w && bullet.y > this.y && bullet.y < this.y + this.h;
+    return  bullet.x > this.x && bullet.x < this.x + this.w && 
+            bullet.y > this.y && bullet.y < this.y + this.h;
+  }
+  hitsPlayer(player) {
+    return  this.x > player.x && this.x < player.x + this.w/2 && 
+            this.y > player.y && this.y < player.y + this.h/2;
   }
 }
