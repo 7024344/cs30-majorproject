@@ -218,7 +218,7 @@ class Enemy {
             bullet.y > this.y && bullet.y < this.y + this.h;
   }
   hitsPlayer(player) {
-    return  this.x > player.x && this.x < player.x + this.w/2 && 
-            this.y > player.y && this.y < player.y + this.h/2;
+    return  player.x > this.x && player.x < this.x + this.w && 
+            player.y > this.y && player.y < this.y + this.h;
   }
 }
