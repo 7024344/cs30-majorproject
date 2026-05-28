@@ -16,6 +16,11 @@ let spawnRate = 90;
 let minSpawnRate = 20;
 let isReloading = false;
 let newPlayer;
+let reloadSound;
+
+function preload() { 
+  reloadSound = loadSound("reloadsound.mp3");
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -36,10 +41,12 @@ function draw() {
   if (isReloading) {
     fill(255, 0, 0);
     text("RELOADING...", 20, 80);
+    reloadSound.play();
   } 
   else {
     fill(0);
     text("Ammo: " + ammo + "/" + maxAmmo, 20, 80);
+    reloadSound.stop();
   }
 
   newPlayer.display();
@@ -218,7 +225,7 @@ class Enemy {
             bullet.y > this.y && bullet.y < this.y + this.h;
   }
   hitsPlayer(player) {
-    return  player.x > this.x && player.x < this.x + this.w && 
-            player.y > this.y && player.y < this.y + this.h;
+    return  player.x < this.x + this.w && player.x + player.w > this.x &&
+            player.y < this.y + this.h && player.y + player.h > this.y;
   }
 }

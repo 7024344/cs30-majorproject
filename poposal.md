@@ -6,12 +6,12 @@
 
 
 ## Needs To Have
-- player body🔜✅
+- player body✅
 - shooting system✅
 - health system
 - sound effects
 - collision detection (bullet)✅
-- enemy movement🔜✅
+- enemy movement✅
 - simple UI (health / score)
 
 ## Nice To Have
