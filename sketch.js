@@ -41,6 +41,7 @@ function draw() {
   if (isReloading) {
     fill(255, 0, 0);
     text("RELOADING...", 20, 80);
+    reloadSound.rate(1.5);
     reloadSound.play();
   } 
   else {
