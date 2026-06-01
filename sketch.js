@@ -41,7 +41,7 @@ function draw() {
   if (isReloading) {
     fill(255, 0, 0);
     text("RELOADING...", 20, 80);
-    reloadSound.rate(1.5);
+    reloadSound.rate(1);
     reloadSound.play();
   } 
   else {
@@ -137,6 +137,9 @@ function gameOver() {
   text("GAME OVER", width / 2, height / 2);
   textSize(30);
   text("Final Score: " + score, width / 2, height / 2 + 50);
+  rect(width / 2 - 75, height / 2 + 75, 150 ,50);
+  textSize(30);
+  text("Reset" + width / 2, height / 2 + 75);
 }
 
 class Player {
