@@ -7,19 +7,32 @@
 
 let Bullets = [];
 let enemies = [];
+
 let score = 0;
+
 let ammo = 30;
 let maxAmmo = 30;
 let fireRate = 0;
+
 let reloadTimes = 0;
+let isReloading = false;
+
 let spawnRate = 90;
 let minSpawnRate = 20;
-let isReloading = false;
+
+let button = false;
+let restartX;
+let restartY;
+let restartW;
+let restartH;
+
 let newPlayer;
 let reloadSound;
+let gunSound;
 
 function preload() { 
   reloadSound = loadSound("reloadsound.mp3");
+  gunSound = loadSound("gunsound.mp3");
 }
 
 function setup() {
@@ -29,10 +42,20 @@ function setup() {
   for (let i = 0; i < 3; i++) {
     enemies.push(new Enemy(random(width / 2, width - 100), random(100, height - 100)));
   }
+
+  restartX = width / 2 - 75;
+  restartY = height / 2 + 65;
+  restartW = 150;
+  restartH = 50;
 }
 
 function draw() {
   background(220);
+
+  // if (button) {
+  //   score = 0;
+  //   ammo = 30;
+  // }
 
   fill(0);
   textSize(24);
@@ -41,13 +64,13 @@ function draw() {
   if (isReloading) {
     fill(255, 0, 0);
     text("RELOADING...", 20, 80);
-    reloadSound.rate(1);
-    reloadSound.play();
+    //reloadSound.rate(1);
+    //reloadSound.play();
   } 
   else {
     fill(0);
     text("Ammo: " + ammo + "/" + maxAmmo, 20, 80);
-    reloadSound.stop();
+    //reloadSound.stop();
   }
 
   newPlayer.display();
@@ -119,6 +142,13 @@ function draw() {
   }
 }
 
+// function mousePressed() {
+//   if (mouseX > restartX && mouseX < restartX + restartW && 
+//       mouseY > restartY && mouseY < restartY + restartH) {
+//     button = !button;
+//   }
+// }
+
 function keyPressed() {
   if (key === "r" || key === "R") {
     if (ammo < maxAmmo && !isReloading) {
@@ -137,9 +167,10 @@ function gameOver() {
   text("GAME OVER", width / 2, height / 2);
   textSize(30);
   text("Final Score: " + score, width / 2, height / 2 + 50);
-  rect(width / 2 - 75, height / 2 + 75, 150 ,50);
+  rect(restartX, restartY, restartW, restartH);
   textSize(30);
-  text("Reset" + width / 2, height / 2 + 75);
+  fill("red");
+  text("Restart", width / 2, height / 2 + 100);
 }
 
 class Player {
@@ -177,8 +208,8 @@ class Player {
 
 class Bullet {
   constructor(x, y, targetX, targetY) {
-    this.x = x + 25; 
-    this.y = y + 50;
+    this.x = x + 50; 
+    this.y = y + 25;
 
     let angle = atan2(targetY - this.y, targetX - this.x);
     this.dx = cos(angle) * 10;
@@ -191,8 +222,8 @@ class Bullet {
   }
 
   display() {
-    fill("black");
-    ellipse(this.x, this.y, 10);
+    fill("red");
+    ellipse(this.x, this.y, 5);
   }
 
   offscreen() {
