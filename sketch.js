@@ -37,6 +37,7 @@ function preload() {
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  gunSound.playMode("restart");
   newPlayer = new Player(width / 8, height / 2);
 
   for (let i = 0; i < 3; i++) {
@@ -76,20 +77,29 @@ function draw() {
   if (mouseIsPressed && fireRate <= 0 && ammo > 0 && !isReloading) {
     Bullets.push(new Bullet(newPlayer.x, newPlayer.y, mouseX, mouseY));
     ammo--;
-    fireRate = 3;
+    gunSound.setVolume(0.3);
+    gunSound.play();
+    fireRate = 4;
   }
 
   if (fireRate > 0) {
     fireRate--;
   }
 
-  if (ammo <= 0 && !isReloading) {
-    isReloading = true;
-    reloadTimes = 90;
-    if (!reloadSound.isPlaying()) {
-      reloadSound.rate(1.5);
-      reloadSound.play();
-    }
+  // if (ammo <= 0 && !isReloading) {
+  //   isReloading = true;
+  //   reloadTimes = 90;
+  //   if (!reloadSound.isPlaying()) {
+  //     reloadSound.rate(1.5);
+  //     reloadSound.play();
+  //   }
+  // }
+
+  if (ammo <= 0 && !isReloading && mouseIsPressed) {
+    fill("red");
+    textAlign(CENTER);
+    textSize(60);
+    text("Pressed R!!", width / 2, height / 2);
   }
 
   if (isReloading) {
@@ -138,6 +148,7 @@ function draw() {
       gameOver();
     }
   }
+  console.log(frameRate());
 }
 
 // function mousePressed() {
@@ -151,7 +162,7 @@ function keyPressed() {
   if (key === "r" || key === "R") {
     if (ammo < maxAmmo && !isReloading) {
       isReloading = true;
-      reloadTimes = 60;
+      reloadTimes = 90;
       if (!reloadSound.isPlaying()) {
         reloadSound.rate(1.5);
         reloadSound.play();
