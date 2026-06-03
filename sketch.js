@@ -17,7 +17,7 @@ let fireRate = 0;
 let reloadTimes = 0;
 let isReloading = false;
 
-let spawnRate = 90;
+let spawnRate = 60;
 let minSpawnRate = 20;
 
 let button = false;
@@ -64,13 +64,10 @@ function draw() {
   if (isReloading) {
     fill(255, 0, 0);
     text("RELOADING...", 20, 80);
-    //reloadSound.rate(1);
-    //reloadSound.play();
   } 
   else {
     fill(0);
     text("Ammo: " + ammo + "/" + maxAmmo, 20, 80);
-    //reloadSound.stop();
   }
 
   newPlayer.display();
@@ -89,6 +86,10 @@ function draw() {
   if (ammo <= 0 && !isReloading) {
     isReloading = true;
     reloadTimes = 90;
+    if (!reloadSound.isPlaying()) {
+      reloadSound.rate(1.5);
+      reloadSound.play();
+    }
   }
 
   if (isReloading) {
@@ -96,6 +97,7 @@ function draw() {
     if (reloadTimes <= 0) {
       ammo = maxAmmo;
       isReloading = false;
+      reloadSound.stop();
     }
   }
 
@@ -128,10 +130,6 @@ function draw() {
       spawnRate -= 10;
     }
   }
-  for (let enemy of enemies) {
-    enemy.update(newPlayer.x, newPlayer.y);
-    enemy.display();
-  }
   for (let i = enemies.length - 1; i >= 0; i--) {
     enemies[i].update(newPlayer.x, newPlayer.y);
     enemies[i].display();
@@ -154,6 +152,10 @@ function keyPressed() {
     if (ammo < maxAmmo && !isReloading) {
       isReloading = true;
       reloadTimes = 60;
+      if (!reloadSound.isPlaying()) {
+        reloadSound.rate(1.5);
+        reloadSound.play();
+      }
     }
   }
 }
