@@ -9,6 +9,8 @@ let Bullets = [];
 let enemies = [];
 
 let score = 0;
+let hp = 100;
+let hitCooldown = 0;
 
 let ammo = 30;
 let maxAmmo = 30;
@@ -20,11 +22,7 @@ let isReloading = false;
 let spawnRate = 60;
 let minSpawnRate = 20;
 
-let button = false;
-let restartX;
-let restartY;
-let restartW;
-let restartH;
+let restartButton;
 
 let newPlayer;
 let reloadSound;
@@ -43,25 +41,17 @@ function setup() {
   for (let i = 0; i < 3; i++) {
     enemies.push(new Enemy(random(width / 2, width - 100), random(100, height - 100)));
   }
-
-  restartX = width / 2 - 75;
-  restartY = height / 2 + 65;
-  restartW = 150;
-  restartH = 50;
 }
 
 function draw() {
   background(220);
 
-  // if (button) {
-  //   score = 0;
-  //   ammo = 30;
-  // }
-
   fill(0);
   textSize(24);
   textAlign(LEFT);
   text("Score: " + score, 20 ,50);
+  text("HP: " + hp, 20, 110);
+
   if (isReloading) {
     fill(255, 0, 0);
     text("RELOADING...", 20, 80);
@@ -86,22 +76,6 @@ function draw() {
     fireRate--;
   }
 
-  // if (ammo <= 0 && !isReloading) {
-  //   isReloading = true;
-  //   reloadTimes = 90;
-  //   if (!reloadSound.isPlaying()) {
-  //     reloadSound.rate(1.5);
-  //     reloadSound.play();
-  //   }
-  // }
-
-  if (ammo <= 0 && !isReloading && mouseIsPressed) {
-    fill("red");
-    textAlign(CENTER);
-    textSize(60);
-    text("Pressed R!!", width / 2, height / 2);
-  }
-
   if (isReloading) {
     reloadTimes--;
     if (reloadTimes <= 0) {
@@ -109,6 +83,13 @@ function draw() {
       isReloading = false;
       reloadSound.stop();
     }
+  }
+
+  if (ammo <= 0 && !isReloading && mouseIsPressed) {
+    fill("red");
+    textAlign(CENTER);
+    textSize(60);
+    text("Pressed R!!", width / 2, height / 2);
   }
 
   for (let i = Bullets.length - 1; i >= 0; i--) {
@@ -145,18 +126,15 @@ function draw() {
     enemies[i].display();
 
     if (enemies[i].hitsPlayer(newPlayer)) {
-      gameOver();
+      hp -= 25;
+      hitCooldown = 30;
+      if (hp <= 0) {
+        gameOver();
+      }
     }
   }
   console.log(frameRate());
 }
-
-// function mousePressed() {
-//   if (mouseX > restartX && mouseX < restartX + restartW && 
-//       mouseY > restartY && mouseY < restartY + restartH) {
-//     button = !button;
-//   }
-// }
 
 function keyPressed() {
   if (key === "r" || key === "R") {
@@ -181,9 +159,9 @@ function gameOver() {
   textSize(30);
   text("Final Score: " + score, width / 2, height / 2 + 50);
   rect(restartX, restartY, restartW, restartH);
-  textSize(30);
-  fill("red");
-  text("Restart", width / 2, height / 2 + 100);
+  restartButton = createButton("Restart");
+  restartButton.position(width / 2 - 60, height / 2 + 100);
+  restartButton.size(120, 50);
 }
 
 class Player {
