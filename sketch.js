@@ -28,9 +28,12 @@ let newPlayer;
 let reloadSound;
 let gunSound;
 
+let zombieGif;
+
 function preload() { 
   reloadSound = loadSound("reloadsound.mp3");
   gunSound = loadSound("gunsound.mp3");
+  zombieGif = loadImage("zombie.gif");
 }
 
 function setup() {
@@ -113,13 +116,15 @@ function draw() {
   if (frameCount % floor(spawnRate) === 0) {
     let spawnX = width + 50; 
     let spawnY = random(0, height - 100);
-    
     enemies.push(new Enemy(spawnX, spawnY));
   }
   if (frameCount % 300 === 0) {
     if (spawnRate > minSpawnRate) {
       spawnRate -= 10;
     }
+  }
+  if (hitCooldown > 0) {
+    hitCooldown--;
   }
   for (let i = enemies.length - 1; i >= 0; i--) {
     enemies[i].update(newPlayer.x, newPlayer.y);
@@ -226,8 +231,8 @@ class Enemy {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.w = 50;
-    this.h = 100;
+    this.w = 100;
+    this.h = 150;
     this.speed = 1.5 + frameCount / 2000;
     
     if (this.speed > 5) {
@@ -242,8 +247,7 @@ class Enemy {
   }
 
   display() {
-    fill(255, 0, 0);
-    rect(this.x, this.y, this.w, this.h); 
+    image(zombieGif, this.x, this.y, this.w, this.h);
   }
 
   hits(bullet) {
