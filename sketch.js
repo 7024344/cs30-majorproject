@@ -1,9 +1,4 @@
-// Project Title
-// Fifa Phattharinwararat
-// 
-// 
-// Extra for Experts:
-// 
+// main
 
 let Bullets = [];
 let enemies = [];
@@ -29,11 +24,17 @@ let reloadSound;
 let gunSound;
 
 let zombieGif;
+let playerGif;
+let playerMove;
+let playerFire;
 
 function preload() { 
   reloadSound = loadSound("reloadsound.mp3");
   gunSound = loadSound("gunsound.mp3");
   zombieGif = loadImage("zombie.gif");
+  playerGif = loadImage("player.gif");
+  playerMove = loadImage("playerMove.gif");
+  playerFire = loadImage("playerFire.gif");
 }
 
 function setup() {
@@ -101,9 +102,9 @@ function draw() {
     
     for (let j = enemies.length - 1; j >= 0; j--) {
       if (Bullets[i] && enemies[j].hits(Bullets[i])) {
+        score++;
         enemies.splice(j, 1);
         Bullets.splice(i, 1);
-        score++;
         break;
       }
     }
@@ -118,9 +119,9 @@ function draw() {
     let spawnY = random(0, height - 100);
     enemies.push(new Enemy(spawnX, spawnY));
   }
-  if (frameCount % 300 === 0) {
+  if (frameCount % 240 === 0) {
     if (spawnRate > minSpawnRate) {
-      spawnRate -= 10;
+      spawnRate -= 5;
     }
   }
   if (hitCooldown > 0) {
@@ -163,10 +164,40 @@ function gameOver() {
   text("GAME OVER", width / 2, height / 2);
   textSize(30);
   text("Final Score: " + score, width / 2, height / 2 + 50);
-  rect(restartX, restartY, restartW, restartH);
   restartButton = createButton("Restart");
-  restartButton.position(width / 2 - 60, height / 2 + 100);
+  restartButton.position(width / 2 - 60, height / 2 + 80);
   restartButton.size(120, 50);
+  restartButton.style("font-size", "20px");
+  restartButton.style("background", "#ff4444");
+  restartButton.style("color", "white");
+  restartButton.style("border", "none");
+  restartButton.style("cursor", "pointer");
+  restartButton.mousePressed(restartGame);
+}
+
+function restartGame() {
+  reloadSound.stop();
+  gunSound.stop();
+  score = 0;
+  ammo = maxAmmo;
+  hp = 100;
+  Bullets = [];
+  enemies = [];
+  isReloading = false;
+  fireRate = 0;
+  reloadTimes = 0;
+  spawnRate = 60;
+  hitCooldown = 0;
+  newPlayer =new Player(width / 8, height / 2);
+  for (let i = 0;i < 3;i++) {
+    enemies.push(new Enemy(random(width / 2, width - 100), random(100, height - 100)));
+  }
+
+  if (restartButton) {
+    restartButton.remove();
+  }
+  
+  loop();
 }
 
 class Player {
@@ -197,8 +228,7 @@ class Player {
   }
 
   display() {
-    fill(255);
-    rect(this.x, this.y, this.w, this.h); 
+    image(playerGif,this.x, this.y, this.w, this.h); 
   }
 }
 
