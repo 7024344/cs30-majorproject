@@ -208,6 +208,7 @@ function gameOver() {
   text("GAME OVER", width / 2, height / 2);
   textSize(30);
   text("Final Score: " + score, width / 2, height / 2 + 50);
+  
   restartButton = createButton("Restart");
   restartButton.position(width / 2 - 60, height / 2 + 80);
   restartButton.size(120, 50);
