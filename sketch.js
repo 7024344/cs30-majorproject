@@ -4,12 +4,12 @@ let Bullets = [];
 let enemies = [];
 
 let score = 0;
-let hp = 100;
 let hitCooldown = 0;
 
 let ammo = 30;
 let maxAmmo = 30;
 let fireRate = 0;
+let gameTime = 0;
 
 let reloadTimes = 0;
 let isReloading = false;
@@ -18,6 +18,7 @@ let spawnRate = 60;
 let minSpawnRate = 20;
 
 let restartButton;
+let isPaused = false;
 
 let newPlayer;
 let reloadSound;
@@ -53,8 +54,8 @@ function draw() {
   fill(0);
   textSize(24);
   textAlign(LEFT);
-  text("Score: " + score, 20 ,50);
-  text("HP: " + hp, 20, 110);
+  text("Score: " + score, 20, 50);
+  text("HP: " + newPlayer.hp, 20, 110);
 
   if (isReloading) {
     fill(255, 0, 0);
@@ -66,18 +67,23 @@ function draw() {
   }
 
   newPlayer.display();
-  newPlayer.update();
-  
-  if (mouseIsPressed && fireRate <= 0 && ammo > 0 && !isReloading) {
-    Bullets.push(new Bullet(newPlayer.x, newPlayer.y, mouseX, mouseY));
-    ammo--;
-    gunSound.setVolume(0.3);
-    gunSound.play();
-    fireRate = 4;
+
+  for (let b of Bullets) {
+    b.display();
+  }
+  for (let e of enemies) {
+    e.display();
   }
 
-  if (fireRate > 0) {
-    fireRate--;
+  if (isPaused) {
+    fill(0, 180);
+    rect(0, 0, width, height);
+
+    fill(255);
+    textAlign(CENTER);
+    textSize(60);
+    text("PAUSED", width / 2, height / 2);
+    return;
   }
 
   if (isReloading) {
@@ -89,6 +95,22 @@ function draw() {
     }
   }
 
+  gameTime++;
+
+  newPlayer.update();
+
+  if (mouseIsPressed && fireRate <= 0 && ammo > 0 && !isReloading) {
+    Bullets.push(new Bullet(newPlayer.x, newPlayer.y, mouseX, mouseY));
+    ammo--;
+    gunSound.play();
+    fireRate = 5;
+    newPlayer.fireAnimation = 5;
+  }
+
+  if (fireRate > 0) {
+    fireRate--;
+  }
+
   if (ammo <= 0 && !isReloading && mouseIsPressed) {
     fill("red");
     textAlign(CENTER);
@@ -98,13 +120,16 @@ function draw() {
 
   for (let i = Bullets.length - 1; i >= 0; i--) {
     Bullets[i].update();
-    Bullets[i].display();
-    
+
     for (let j = enemies.length - 1; j >= 0; j--) {
       if (Bullets[i] && enemies[j].hits(Bullets[i])) {
-        score++;
-        enemies.splice(j, 1);
+        enemies[j].hp -= 25;
         Bullets.splice(i, 1);
+
+        if (enemies[j].hp <= 0) {
+          enemies.splice(j, 1);
+          score++;
+        }
         break;
       }
     }
@@ -115,34 +140,39 @@ function draw() {
   }
 
   if (frameCount % floor(spawnRate) === 0) {
-    let spawnX = width + 50; 
-    let spawnY = random(0, height - 100);
-    enemies.push(new Enemy(spawnX, spawnY));
+    enemies.push(new Enemy(width + 50, random(height)));
   }
-  if (frameCount % 240 === 0) {
-    if (spawnRate > minSpawnRate) {
-      spawnRate -= 5;
-    }
-  }
-  if (hitCooldown > 0) {
-    hitCooldown--;
-  }
+
   for (let i = enemies.length - 1; i >= 0; i--) {
     enemies[i].update(newPlayer.x, newPlayer.y);
-    enemies[i].display();
 
-    if (enemies[i].hitsPlayer(newPlayer)) {
-      hp -= 25;
+    if (enemies[i].hitsPlayer(newPlayer) && hitCooldown <= 0) {
+      newPlayer.hp -= 25;
       hitCooldown = 30;
-      if (hp <= 0) {
+
+      if (newPlayer.hp <= 0) {
         gameOver();
+        return;
       }
     }
   }
-  console.log(frameRate());
+
+  if (hitCooldown > 0) {
+    hitCooldown--;
+  }
 }
 
 function keyPressed() {
+  if (keyCode === ESCAPE) {
+    if (isPaused) {
+      resumeGame();
+    } 
+    else {
+      pauseGame();
+    }
+    return false;
+  }
+
   if (key === "r" || key === "R") {
     if (ammo < maxAmmo && !isReloading) {
       isReloading = true;
@@ -155,6 +185,14 @@ function keyPressed() {
   }
 }
 
+function pauseGame() {
+  isPaused = true;
+}
+
+function resumeGame() {
+  isPaused = false;
+}
+
 function gameOver() {
   noLoop();
   background(0, 150);
@@ -164,6 +202,7 @@ function gameOver() {
   text("GAME OVER", width / 2, height / 2);
   textSize(30);
   text("Final Score: " + score, width / 2, height / 2 + 50);
+  
   restartButton = createButton("Restart");
   restartButton.position(width / 2 - 60, height / 2 + 80);
   restartButton.size(120, 50);
@@ -179,8 +218,8 @@ function restartGame() {
   reloadSound.stop();
   gunSound.stop();
   score = 0;
+  gameTime = 0;
   ammo = maxAmmo;
-  hp = 100;
   Bullets = [];
   enemies = [];
   isReloading = false;
@@ -207,20 +246,28 @@ class Player {
     this.speed = 5;
     this.w = 50;
     this.h = 100;
+    this.isMoving = false;
+    this.fireAnimation = 0;
+    this.hp = 100;
   }
 
   update() {
+    this.isMoving = false;
     if (keyIsDown(68)) {
       this.x += this.speed; // D
+      this.isMoving = true;
     }
     if (keyIsDown(65)) {
       this.x -= this.speed; // A
+      this.isMoving = true;
     }
     if (keyIsDown(83)) {
       this.y += this.speed; // S
+      this.isMoving = true;
     }
     if (keyIsDown(87)) {
       this.y -= this.speed; // W
+      this.isMoving = true;
     }
 
     this.x = constrain(this.x, 0, width/2 - this.w);
@@ -228,7 +275,20 @@ class Player {
   }
 
   display() {
-    image(playerGif,this.x, this.y, this.w, this.h); 
+    if (this.fireAnimation > 0) {
+      image(playerFire, this.x, this.y, this.w, this.h + 15);
+      this.fireAnimation--;
+    }
+    else if (this.isMoving) {
+      image(playerMove,this.x, this.y, this.w, this.h + 30);
+    }
+    else {
+      image(playerGif,this.x, this.y, this.w, this.h + 60);
+    }
+    fill(80);
+    rect(this.x, this.y - 15, this.w, 8);
+    fill(0,255,0);
+    rect(this.x, this.y - 15, map(this.hp, 0, 100, 0, this.w), 8);
   }
 }
 
@@ -263,7 +323,9 @@ class Enemy {
     this.y = y;
     this.w = 100;
     this.h = 150;
-    this.speed = 1.5 + frameCount / 2000;
+    this.maxHp = 100;
+    this.hp = this.maxHp;
+    this.speed = 1.5 + gameTime / 2000;
     
     if (this.speed > 5) {
       this.speed = 5;
@@ -278,6 +340,10 @@ class Enemy {
 
   display() {
     image(zombieGif, this.x, this.y, this.w, this.h);
+    fill(80);
+    rect(this.x,this.y - 15,this.w,8);
+    fill(0,255,0);
+    rect(this.x,this.y - 15,map(this.hp,0,this.maxHp,0,this.w),8);
   }
 
   hits(bullet) {
