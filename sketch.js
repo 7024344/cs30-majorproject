@@ -1,29 +1,45 @@
-// Project Title
-// Fifa Phattharinwararat
-// 
-// 
-// Extra for Experts:
-// 
+// main
 
 let Bullets = [];
 let enemies = [];
+
 let score = 0;
+let hitCooldown = 0;
+
 let ammo = 30;
 let maxAmmo = 30;
 let fireRate = 0;
+let gameTime = 0;
+
 let reloadTimes = 0;
-let spawnRate = 90;
-let minSpawnRate = 20;
 let isReloading = false;
+
+let spawnRate = 60;
+let minSpawnRate = 20;
+
+let restartButton;
+
 let newPlayer;
 let reloadSound;
+let gunSound;
+
+let zombieGif;
+let playerGif;
+let playerMove;
+let playerFire;
 
 function preload() { 
   reloadSound = loadSound("reloadsound.mp3");
+  gunSound = loadSound("gunsound.mp3");
+  zombieGif = loadImage("zombie.gif");
+  playerGif = loadImage("player.gif");
+  playerMove = loadImage("playerMove.gif");
+  playerFire = loadImage("playerFire.gif");
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  gunSound.playMode("restart");
   newPlayer = new Player(width / 8, height / 2);
 
   for (let i = 0; i < 3; i++) {
@@ -34,38 +50,37 @@ function setup() {
 function draw() {
   background(220);
 
+  gameTime++;
+
   fill(0);
   textSize(24);
   textAlign(LEFT);
   text("Score: " + score, 20 ,50);
+  text("HP: " + newPlayer.hp, 20, 110);
+
   if (isReloading) {
     fill(255, 0, 0);
     text("RELOADING...", 20, 80);
-    reloadSound.rate(1.5);
-    reloadSound.play();
   } 
   else {
     fill(0);
     text("Ammo: " + ammo + "/" + maxAmmo, 20, 80);
-    reloadSound.stop();
   }
 
-  newPlayer.display();
   newPlayer.update();
+  newPlayer.display();
   
   if (mouseIsPressed && fireRate <= 0 && ammo > 0 && !isReloading) {
     Bullets.push(new Bullet(newPlayer.x, newPlayer.y, mouseX, mouseY));
     ammo--;
-    fireRate = 3;
+    gunSound.setVolume(0.3);
+    gunSound.play();
+    fireRate = 5;
+    newPlayer.fireAnimation = 5;
   }
 
   if (fireRate > 0) {
     fireRate--;
-  }
-
-  if (ammo <= 0 && !isReloading) {
-    isReloading = true;
-    reloadTimes = 90;
   }
 
   if (isReloading) {
@@ -73,7 +88,15 @@ function draw() {
     if (reloadTimes <= 0) {
       ammo = maxAmmo;
       isReloading = false;
+      reloadSound.stop();
     }
+  }
+
+  if (ammo <= 0 && !isReloading && mouseIsPressed) {
+    fill("red");
+    textAlign(CENTER);
+    textSize(60);
+    text("Pressed R!!", width / 2, height / 2);
   }
 
   for (let i = Bullets.length - 1; i >= 0; i--) {
@@ -82,9 +105,12 @@ function draw() {
     
     for (let j = enemies.length - 1; j >= 0; j--) {
       if (Bullets[i] && enemies[j].hits(Bullets[i])) {
-        enemies.splice(j, 1);
+        enemies[j].hp -= 25;
         Bullets.splice(i, 1);
-        score++;
+        if (enemies[j].hp <= 0) {
+          enemies.splice(j, 1);
+          score++;
+        }
         break;
       }
     }
@@ -97,24 +123,28 @@ function draw() {
   if (frameCount % floor(spawnRate) === 0) {
     let spawnX = width + 50; 
     let spawnY = random(0, height - 100);
-    
     enemies.push(new Enemy(spawnX, spawnY));
   }
-  if (frameCount % 300 === 0) {
+  if (frameCount % 240 === 0) {
     if (spawnRate > minSpawnRate) {
-      spawnRate -= 10;
+      spawnRate -= 5;
     }
   }
-  for (let enemy of enemies) {
-    enemy.update(newPlayer.x, newPlayer.y);
-    enemy.display();
+  if (hitCooldown > 0) {
+    hitCooldown--;
   }
   for (let i = enemies.length - 1; i >= 0; i--) {
     enemies[i].update(newPlayer.x, newPlayer.y);
     enemies[i].display();
 
-    if (enemies[i].hitsPlayer(newPlayer)) {
-      gameOver();
+    if (enemies[i].hitsPlayer(newPlayer) && hitCooldown <= 0) {
+      newPlayer.hp -= 25;
+      hitCooldown = 30;
+      if (newPlayer.hp <= 0) {
+        newPlayer.hp = 0;
+        gameOver();
+        return;
+      }
     }
   }
 }
@@ -123,7 +153,11 @@ function keyPressed() {
   if (key === "r" || key === "R") {
     if (ammo < maxAmmo && !isReloading) {
       isReloading = true;
-      reloadTimes = 60;
+      reloadTimes = 90;
+      if (!reloadSound.isPlaying()) {
+        reloadSound.rate(1.5);
+        reloadSound.play();
+      }
     }
   }
 }
@@ -137,6 +171,40 @@ function gameOver() {
   text("GAME OVER", width / 2, height / 2);
   textSize(30);
   text("Final Score: " + score, width / 2, height / 2 + 50);
+  restartButton = createButton("Restart");
+  restartButton.position(width / 2 - 60, height / 2 + 80);
+  restartButton.size(120, 50);
+  restartButton.style("font-size", "20px");
+  restartButton.style("background", "#ff4444");
+  restartButton.style("color", "white");
+  restartButton.style("border", "none");
+  restartButton.style("cursor", "pointer");
+  restartButton.mousePressed(restartGame);
+}
+
+function restartGame() {
+  reloadSound.stop();
+  gunSound.stop();
+  score = 0;
+  gameTime = 0;
+  ammo = maxAmmo;
+  Bullets = [];
+  enemies = [];
+  isReloading = false;
+  fireRate = 0;
+  reloadTimes = 0;
+  spawnRate = 60;
+  hitCooldown = 0;
+  newPlayer =new Player(width / 8, height / 2);
+  for (let i = 0;i < 3;i++) {
+    enemies.push(new Enemy(random(width / 2, width - 100), random(100, height - 100)));
+  }
+
+  if (restartButton) {
+    restartButton.remove();
+  }
+  
+  loop();
 }
 
 class Player {
@@ -146,20 +214,28 @@ class Player {
     this.speed = 5;
     this.w = 50;
     this.h = 100;
+    this.isMoving = false;
+    this.fireAnimation = 0;
+    this.hp = 100;
   }
 
   update() {
+    this.isMoving = false;
     if (keyIsDown(68)) {
       this.x += this.speed; // D
+      this.isMoving = true;
     }
     if (keyIsDown(65)) {
       this.x -= this.speed; // A
+      this.isMoving = true;
     }
     if (keyIsDown(83)) {
       this.y += this.speed; // S
+      this.isMoving = true;
     }
     if (keyIsDown(87)) {
       this.y -= this.speed; // W
+      this.isMoving = true;
     }
 
     this.x = constrain(this.x, 0, width/2 - this.w);
@@ -167,15 +243,27 @@ class Player {
   }
 
   display() {
-    fill(255);
-    rect(this.x, this.y, this.w, this.h); 
+    if (this.fireAnimation > 0) {
+      image(playerFire, this.x, this.y, this.w, this.h + 15);
+      this.fireAnimation--;
+    }
+    else if (this.isMoving) {
+      image(playerMove,this.x, this.y, this.w, this.h + 30);
+    }
+    else {
+      image(playerGif,this.x, this.y, this.w, this.h + 60);
+    }
+    fill(80);
+    rect(this.x, this.y - 15, this.w, 8);
+    fill(0,255,0);
+    rect(this.x, this.y - 15, map(this.hp, 0, 100, 0, this.w), 8);
   }
 }
 
 class Bullet {
   constructor(x, y, targetX, targetY) {
-    this.x = x + 25; 
-    this.y = y + 50;
+    this.x = x + 50; 
+    this.y = y + 25;
 
     let angle = atan2(targetY - this.y, targetX - this.x);
     this.dx = cos(angle) * 10;
@@ -188,8 +276,8 @@ class Bullet {
   }
 
   display() {
-    fill("black");
-    ellipse(this.x, this.y, 10);
+    fill("red");
+    ellipse(this.x, this.y, 5);
   }
 
   offscreen() {
@@ -201,9 +289,11 @@ class Enemy {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.w = 50;
-    this.h = 100;
-    this.speed = 1.5 + frameCount / 2000;
+    this.w = 100;
+    this.h = 150;
+    this.maxHp = 100;
+    this.hp = this.maxHp;
+    this.speed = 1.5 + gameTime / 2000;
     
     if (this.speed > 5) {
       this.speed = 5;
@@ -217,9 +307,12 @@ class Enemy {
   }
 
   display() {
-    fill(255, 0, 0);
-    rect(this.x, this.y, this.w, this.h); 
-  }
+    image(zombieGif, this.x, this.y, this.w, this.h);
+    fill(80);
+    rect(this.x,this.y - 15,this.w,8);
+    fill(0,255,0);
+    rect(this.x,this.y - 15,map(this.hp,0,this.maxHp,0,this.w),8);
+}
 
   hits(bullet) {
     return  bullet.x > this.x && bullet.x < this.x + this.w && 
