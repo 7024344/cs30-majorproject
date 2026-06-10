@@ -1,4 +1,6 @@
-// main
+// Malor Project CS30
+// Fifa Phattharinwararat
+// main code
 
 let Bullets = [];
 let enemies = [];
