@@ -2,8 +2,14 @@
   "include": [
     "*.js",
     "libraries/*.js",
+<<<<<<< HEAD
     "c:\\Users\\yuran\\.vscode\\extensions\\wmcicompsci.cs30-p5-1.9.7\\p5types\\global.d.ts",
     "c:\\Users\\yuran\\.vscode\\extensions\\wmcicompsci.cs30-p5-1.9.7\\p5types\\p5.sound.d.ts",
     "c:\\Users\\yuran\\.vscode\\extensions\\wmcicompsci.cs30-p5-1.9.7\\p5types\\p5.sound.global.d.ts"
+=======
+    "c:\\Users\\7024344\\.vscode\\extensions\\wmcicompsci.cs30-p5-1.9.7\\p5types\\global.d.ts",
+    "c:\\Users\\7024344\\.vscode\\extensions\\wmcicompsci.cs30-p5-1.9.7\\p5types\\p5.sound.d.ts",
+    "c:\\Users\\7024344\\.vscode\\extensions\\wmcicompsci.cs30-p5-1.9.7\\p5types\\p5.sound.global.d.ts"
+>>>>>>> 1bc3b9f2f278e35b1325d12ad65fe76e7d2d1113
   ]
 }
