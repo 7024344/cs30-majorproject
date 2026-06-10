@@ -297,7 +297,7 @@ class Player {
 class Bullet {
   constructor(x, y, targetX, targetY) {
     this.x = x + 50; 
-    this.y = y + 25;
+    this.y = y + 30;
 
     let angle = atan2(targetY - this.y, targetX - this.x);
     this.dx = cos(angle) * 10;
