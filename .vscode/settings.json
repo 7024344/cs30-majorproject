@@ -1,3 +1,7 @@
 {
+<<<<<<< HEAD
+    "eslint.nodePath": "c:\\Users\\yuran\\.vscode\\extensions\\wmcicompsci.cs30-p5-1.9.4\\node_modules"
+=======
     "eslint.nodePath": "c:\\Users\\7024344\\.vscode\\extensions\\wmcicompsci.cs30-p5-1.9.4\\node_modules"
+>>>>>>> 1bc3b9f2f278e35b1325d12ad65fe76e7d2d1113
 }

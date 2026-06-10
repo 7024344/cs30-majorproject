@@ -18,6 +18,11 @@ let spawnRate = 60;
 let minSpawnRate = 20;
 
 let restartButton;
+<<<<<<< HEAD
+=======
+let pauseButton;
+let resumeButton;
+>>>>>>> c6664a2d3a24aca5d0863eaff11101456327a0d5
 let isPaused = false;
 
 let newPlayer;
@@ -60,8 +65,7 @@ function draw() {
   if (isReloading) {
     fill(255, 0, 0);
     text("RELOADING...", 20, 80);
-  } 
-  else {
+  } else {
     fill(0);
     text("Ammo: " + ammo + "/" + maxAmmo, 20, 80);
   }
@@ -166,8 +170,12 @@ function keyPressed() {
   if (keyCode === ESCAPE) {
     if (isPaused) {
       resumeGame();
+<<<<<<< HEAD
     } 
     else {
+=======
+    } else {
+>>>>>>> c6664a2d3a24aca5d0863eaff11101456327a0d5
       pauseGame();
     }
     return false;
@@ -187,10 +195,22 @@ function keyPressed() {
 
 function pauseGame() {
   isPaused = true;
+<<<<<<< HEAD
+=======
+
+  pauseButton.hide();
+  resumeButton.show();
+>>>>>>> c6664a2d3a24aca5d0863eaff11101456327a0d5
 }
 
 function resumeGame() {
   isPaused = false;
+<<<<<<< HEAD
+=======
+
+  resumeButton.hide();
+  pauseButton.show();
+>>>>>>> c6664a2d3a24aca5d0863eaff11101456327a0d5
 }
 
 function gameOver() {
@@ -344,7 +364,11 @@ class Enemy {
     rect(this.x,this.y - 15,this.w,8);
     fill(0,255,0);
     rect(this.x,this.y - 15,map(this.hp,0,this.maxHp,0,this.w),8);
+<<<<<<< HEAD
   }
+=======
+}
+>>>>>>> c6664a2d3a24aca5d0863eaff11101456327a0d5
 
   hits(bullet) {
     return  bullet.x > this.x && bullet.x < this.x + this.w && 
