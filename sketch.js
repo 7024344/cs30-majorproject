@@ -31,6 +31,7 @@ let playerGif;
 let playerMove;
 let playerFire;
 
+// everyGif in here
 function preload() { 
   reloadSound = loadSound("reloadsound.mp3");
   gunSound = loadSound("gunsound.mp3");
@@ -40,6 +41,7 @@ function preload() {
   playerFire = loadImage("playerFire.gif");
 }
 
+// setup everything
 function setup() {
   createCanvas(windowWidth, windowHeight);
   gunSound.playMode("restart");
@@ -70,13 +72,15 @@ function draw() {
 
   newPlayer.display();
 
+  // have bullets and zombies on the screen when pause game
   for (let b of Bullets) {
     b.display();
   }
   for (let e of enemies) {
     e.display();
   }
-
+  
+  // pause game
   if (isPaused) {
     fill(0, 180);
     rect(0, 0, width, height);
@@ -88,6 +92,7 @@ function draw() {
     return;
   }
 
+  // about reload function too
   if (isReloading) {
     reloadTimes--;
     if (reloadTimes <= 0) {
@@ -97,10 +102,12 @@ function draw() {
     }
   }
 
+  // gametimes
   gameTime++;
 
   newPlayer.update();
 
+  // shooting
   if (mouseIsPressed && fireRate <= 0 && ammo > 0 && !isReloading) {
     Bullets.push(new Bullet(newPlayer.x, newPlayer.y, mouseX, mouseY));
     ammo--;
@@ -113,6 +120,7 @@ function draw() {
     fireRate--;
   }
 
+  // Tell when your ammo = 0
   if (ammo <= 0 && !isReloading && mouseIsPressed) {
     fill("red");
     textAlign(CENTER);
@@ -120,6 +128,7 @@ function draw() {
     text("Pressed R!!", width / 2, height / 2);
   }
 
+  // bullets hit zombies
   for (let i = Bullets.length - 1; i >= 0; i--) {
     Bullets[i].update();
 
@@ -135,16 +144,18 @@ function draw() {
         break;
       }
     }
-
+    
     if (Bullets[i] && Bullets[i].offscreen()) {
       Bullets.splice(i, 1);
     }
   }
 
+  // create zombies form right size
   if (frameCount % floor(spawnRate) === 0) {
     enemies.push(new Enemy(width + 50, random(height)));
   }
 
+  // count the zombies is hit player and if player hp = 0 is gameover
   for (let i = enemies.length - 1; i >= 0; i--) {
     enemies[i].update(newPlayer.x, newPlayer.y);
 
@@ -159,11 +170,13 @@ function draw() {
     }
   }
 
+  // zombies hit cooldown
   if (hitCooldown > 0) {
     hitCooldown--;
   }
 }
 
+// keyPressed ESC for pause and reload function
 function keyPressed() {
   if (keyCode === ESCAPE) {
     if (isPaused) {
@@ -187,6 +200,7 @@ function keyPressed() {
   }
 }
 
+// both for pause function
 function pauseGame() {
   isPaused = true;
 }
@@ -195,6 +209,7 @@ function resumeGame() {
   isPaused = false;
 }
 
+// functiom gameover and create Restart button
 function gameOver() {
   noLoop();
   background(0, 150);
@@ -216,6 +231,7 @@ function gameOver() {
   restartButton.mousePressed(restartGame);
 }
 
+// function restart game
 function restartGame() {
   reloadSound.stop();
   gunSound.stop();
@@ -241,6 +257,7 @@ function restartGame() {
   loop();
 }
 
+// class of player
 class Player {
   constructor(x, y) {
     this.x = x;
@@ -294,6 +311,7 @@ class Player {
   }
 }
 
+// class of bullet
 class Bullet {
   constructor(x, y, targetX, targetY) {
     this.x = x + 50; 
@@ -319,6 +337,7 @@ class Bullet {
   }
 }
 
+// class of enemy
 class Enemy {
   constructor(x, y) {
     this.x = x;
